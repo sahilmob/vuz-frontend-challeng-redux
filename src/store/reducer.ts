@@ -1,5 +1,6 @@
 import { State } from "./types";
 import { Character } from "../types";
+import { filters } from "../lib/constants";
 import jsonData from "../data/characters.json";
 import { ACTIONS, ACTION_TYPES } from "./actions";
 import { orderedAbilities } from "../lib/constants";
@@ -42,9 +43,14 @@ export const reducer = (state = initialState, action: ACTION_TYPES) => {
     case ACTIONS.SEARCH: {
       const { text } = action.payload;
       const tags = state.selectedTags;
-      const filteredCharacters = tags.size
-        ? applyFilters(tags, dataWithOrderedAbilities)
+      const charactersToBeFiltered: Character[] = tags.has("my_team")
+        ? Object.values(state.selectedCharacters)
         : dataWithOrderedAbilities;
+
+      const filteredCharacters =
+        tags.size > 1
+          ? applyFilters(tags, charactersToBeFiltered)
+          : charactersToBeFiltered;
 
       const result = text
         ? applySearch(text, filteredCharacters)
@@ -57,16 +63,33 @@ export const reducer = (state = initialState, action: ACTION_TYPES) => {
       };
     }
     case ACTIONS.TOGGLE_TAG: {
-      const { text: tag } = action.payload;
-      const tags = state.selectedTags;
-      let filteredCharacters = [];
+      const { text } = action.payload;
+      const tag = text as keyof typeof filters;
+      let tags = state.selectedTags;
+      let filteredCharacters: Character[] = [];
 
       if (tags.has(tag)) {
         tags.delete(tag);
-        filteredCharacters = applyFilters(tags, dataWithOrderedAbilities);
+        filteredCharacters =
+          tags.has("my_team") && tags.size === 1
+            ? Object.values(state.selectedCharacters)
+            : applyFilters(
+                tags,
+                tags.has("my_team")
+                  ? Object.values(state.selectedCharacters)
+                  : dataWithOrderedAbilities
+              );
       } else {
         tags.add(tag);
-        filteredCharacters = applyFilters(tags, state.characters);
+        filteredCharacters =
+          tags.has("my_team") && tags.size === 1
+            ? Object.values(state.selectedCharacters)
+            : applyFilters(
+                tags,
+                tags.has("my_team")
+                  ? Object.values(state.selectedCharacters)
+                  : state.characters
+              );
       }
 
       if (state.searchText) {

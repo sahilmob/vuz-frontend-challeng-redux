@@ -3,6 +3,7 @@ import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { State } from "../store/types";
+import { filters } from "../lib/constants";
 import { ToggleTag } from "./styled/ToggleTag";
 import { ACTIONS, CLEAR_TAGS, TOGGLE_TAG } from "../store/actions";
 
@@ -20,16 +21,6 @@ const clearAllStyles = css({
   cursor: "pointer",
   textDecoration: "underline",
 });
-
-const filters = [
-  "monster",
-  "melee",
-  "human",
-  "agile",
-  "god",
-  "aerial",
-  "strong",
-];
 
 export default function Filters() {
   const selectedTags = useSelector<State, Set<string>>(
@@ -52,11 +43,11 @@ export default function Filters() {
 
   return (
     <div css={filtersListStyles}>
-      {filters.map((f) => (
+      {Object.entries(filters).map(([k, f]) => (
         <ToggleTag
           key={f}
-          onClick={() => toggleTag(f)}
-          checked={selectedTags.has(f)}
+          onClick={() => toggleTag(k)}
+          checked={selectedTags.has(k)}
         >
           {f}
         </ToggleTag>
