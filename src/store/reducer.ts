@@ -1,9 +1,9 @@
+import { State } from "./types";
+import { ACTIONS, ACTION_TYPES } from "./actions";
 import { Character } from "../types";
 import jsonData from "../data/characters.json";
 import { orderedAbilities } from "../lib/constants";
 import { sortArrayBySpecificOrder } from "../lib/helpers";
-import { State } from "./types";
-import { TOGGLE_SELECT_CHARACTER } from "./actions";
 
 const data: Character[] = jsonData as Character[];
 
@@ -23,9 +23,9 @@ const initialState: State = {
   characters: dataWithOrderedAbilities,
 };
 
-export const reducer = (state = initialState, action: any) => {
+export const reducer = (state = initialState, action: ACTION_TYPES) => {
   switch (action.type) {
-    case TOGGLE_SELECT_CHARACTER: {
+    case ACTIONS.TOGGLE_SELECT_CHARACTER: {
       const { id, character } = action.payload;
       if (id in state.selectedCharacters) {
         const newSelectedCharacters = { ...state.selectedCharacters };

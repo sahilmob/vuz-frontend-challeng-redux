@@ -9,7 +9,7 @@ import { State } from "../store/types";
 import { TableRow } from "./styled/TableRow";
 import { Avatar } from "../components/styled/Avatar";
 import { Checkbox } from "../components/styled/Checkbox";
-import { TOGGLE_SELECT_CHARACTER } from "../store/actions";
+import { ACTIONS, TOGGLE_SELECT_CHARACTER } from "../store/actions";
 
 type Props = { character: Character };
 
@@ -43,7 +43,10 @@ export const CharacterTableRow: FC<Props> = ({ character }) => {
   const dispatch = useDispatch();
 
   const toggleSelectCharacter = (id: number, c: Character) => {
-    dispatch({ type: TOGGLE_SELECT_CHARACTER, payload: { id, character: c } });
+    dispatch<TOGGLE_SELECT_CHARACTER>({
+      type: ACTIONS.TOGGLE_SELECT_CHARACTER,
+      payload: { id, character: c },
+    });
   };
 
   return (

@@ -14,8 +14,8 @@ function App() {
   return (
     <Provider store={store}>
       <Header />
-      {/* <SelectedCharacters />
-      <SearchInput />
+      <SelectedCharacters />
+      {/*<SearchInput />
       <Filters /> */}
       <CharactersTable />
     </Provider>

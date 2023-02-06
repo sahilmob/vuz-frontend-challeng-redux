@@ -1,9 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { useMemo } from "react";
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Character } from "../types";
+import { State } from "../store/types";
 import { abilitiesList } from "../lib/constants";
-import { useStore } from "../contexts/characters";
 import { ClickableAvatar } from "./styled/ClickableAvatar";
+import { ACTIONS, TOGGLE_SELECT_CHARACTER } from "../store/actions";
 
 const titleStyles = css({
   textAlign: "center",
@@ -53,9 +57,17 @@ const totalsNote = css({
 });
 
 export default function SelectedCharacters() {
-  const { state: selectedCharactersMap, toggleSelectCharacter } = useStore(
-    (store) => store.selectedCharacters
+  const selectedCharactersMap = useSelector<State, { [k: number]: Character }>(
+    (state) => state.selectedCharacters
   );
+  const dispatch = useDispatch();
+
+  const toggleSelectCharacter = (id: number, c: Character) => {
+    dispatch<TOGGLE_SELECT_CHARACTER>({
+      type: ACTIONS.TOGGLE_SELECT_CHARACTER,
+      payload: { id, character: c },
+    });
+  };
 
   const selectedCharacters = useMemo(
     () => Object.values(selectedCharactersMap),
