@@ -23,24 +23,31 @@ const initialState: State = {
   characters: dataWithOrderedAbilities,
 };
 
+const applyFilters = (tags: Set<string>, characters: Character[]) => {
+  return tags.size
+    ? characters.filter((c) => c.tags?.some((t) => tags.has(t.tag_name)))
+    : characters;
+};
+
+const applySearch = (text: string, characters: Character[]) => {
+  return characters.filter(
+    (c) =>
+      c?.name.toLocaleLowerCase()?.includes(text) ||
+      c?.tags?.some((t) => t?.tag_name.includes(text.toLocaleLowerCase()))
+  );
+};
+
 export const reducer = (state = initialState, action: ACTION_TYPES) => {
   switch (action.type) {
     case ACTIONS.SEARCH: {
       const { text } = action.payload;
       const tags = state.selectedTags;
       const filteredCharacters = tags.size
-        ? dataWithOrderedAbilities.filter((c) =>
-            c.tags?.some((t) => tags.has(t.tag_name))
-          )
+        ? applyFilters(tags, dataWithOrderedAbilities)
         : dataWithOrderedAbilities;
+
       const result = text
-        ? filteredCharacters.filter(
-            (c) =>
-              c?.name.toLocaleLowerCase()?.includes(text) ||
-              c?.tags?.some((t) =>
-                t?.tag_name.includes(text.toLocaleLowerCase())
-              )
-          )
+        ? applySearch(text, filteredCharacters)
         : filteredCharacters;
 
       return {
@@ -52,17 +59,19 @@ export const reducer = (state = initialState, action: ACTION_TYPES) => {
     case ACTIONS.TOGGLE_TAG: {
       const { text: tag } = action.payload;
       const tags = state.selectedTags;
+      let filteredCharacters = [];
+
       if (tags.has(tag)) {
         tags.delete(tag);
+        filteredCharacters = applyFilters(tags, dataWithOrderedAbilities);
       } else {
         tags.add(tag);
+        filteredCharacters = applyFilters(tags, state.characters);
       }
 
-      const filteredCharacters = tags.size
-        ? dataWithOrderedAbilities.filter((c) =>
-            c.tags?.some((t) => tags.has(t.tag_name))
-          )
-        : dataWithOrderedAbilities;
+      if (state.searchText) {
+        filteredCharacters = applySearch(state.searchText, filteredCharacters);
+      }
 
       return {
         ...state,
@@ -75,13 +84,7 @@ export const reducer = (state = initialState, action: ACTION_TYPES) => {
       let characters = dataWithOrderedAbilities;
 
       if (searchText) {
-        characters = characters.filter(
-          (c) =>
-            c?.name.toLocaleLowerCase()?.includes(searchText) ||
-            c?.tags?.some((t) =>
-              t?.tag_name.includes(searchText.toLocaleLowerCase())
-            )
-        );
+        characters = applySearch(searchText, characters);
       }
 
       return {
