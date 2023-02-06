@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
 
+import { State } from "../store/types";
 import { ToggleTag } from "./styled/ToggleTag";
-import { useStore } from "../contexts/characters";
+import { ACTIONS, CLEAR_TAGS, TOGGLE_TAG } from "../store/actions";
 
 const filtersListStyles = css({
   display: "flex",
@@ -30,11 +32,23 @@ const filters = [
 ];
 
 export default function Filters() {
-  const {
-    state: selectedTags,
-    toggleTag,
-    clearFilters,
-  } = useStore((state) => state.selectedTags);
+  const selectedTags = useSelector<State, Set<string>>(
+    (state) => state.selectedTags
+  );
+  const dispatch = useDispatch();
+
+  const toggleTag = (text: string) => {
+    dispatch<TOGGLE_TAG>({
+      type: ACTIONS.TOGGLE_TAG,
+      payload: { text },
+    });
+  };
+
+  const clearTags = () => {
+    dispatch<CLEAR_TAGS>({
+      type: ACTIONS.CLEAR_TAGS,
+    });
+  };
 
   return (
     <div css={filtersListStyles}>
@@ -47,7 +61,7 @@ export default function Filters() {
           {f}
         </ToggleTag>
       ))}
-      <button onClick={clearFilters} type="button" css={clearAllStyles}>
+      <button onClick={clearTags} type="button" css={clearAllStyles}>
         Clear all
       </button>
     </div>

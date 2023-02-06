@@ -16,7 +16,7 @@ function App() {
       <Header />
       <SelectedCharacters />
       <SearchInput />
-      {/*<Filters /> */}
+      <Filters />
       <CharactersTable />
     </Provider>
   );

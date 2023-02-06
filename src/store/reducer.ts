@@ -49,6 +49,47 @@ export const reducer = (state = initialState, action: ACTION_TYPES) => {
         characters: result,
       };
     }
+    case ACTIONS.TOGGLE_TAG: {
+      const { text: tag } = action.payload;
+      const tags = state.selectedTags;
+      if (tags.has(tag)) {
+        tags.delete(tag);
+      } else {
+        tags.add(tag);
+      }
+
+      const filteredCharacters = tags.size
+        ? dataWithOrderedAbilities.filter((c) =>
+            c.tags?.some((t) => tags.has(t.tag_name))
+          )
+        : dataWithOrderedAbilities;
+
+      return {
+        ...state,
+        selectedTags: new Set(tags),
+        characters: filteredCharacters,
+      };
+    }
+    case ACTIONS.CLEAR_TAGS: {
+      const searchText = state.searchText;
+      let characters = dataWithOrderedAbilities;
+
+      if (searchText) {
+        characters = characters.filter(
+          (c) =>
+            c?.name.toLocaleLowerCase()?.includes(searchText) ||
+            c?.tags?.some((t) =>
+              t?.tag_name.includes(searchText.toLocaleLowerCase())
+            )
+        );
+      }
+
+      return {
+        ...state,
+        characters,
+        selectedTags: new Set(),
+      };
+    }
     case ACTIONS.TOGGLE_SELECT_CHARACTER: {
       const { id, character } = action.payload;
       if (id in state.selectedCharacters) {

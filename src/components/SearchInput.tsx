@@ -3,7 +3,6 @@ import { ChangeEvent } from "react";
 import { css } from "@emotion/react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Character } from "../types";
 import { State } from "../store/types";
 import { ACTIONS, SEARCH } from "../store/actions";
 
