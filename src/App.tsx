@@ -15,8 +15,8 @@ function App() {
     <Provider store={store}>
       <Header />
       <SelectedCharacters />
-      {/*<SearchInput />
-      <Filters /> */}
+      <SearchInput />
+      {/*<Filters /> */}
       <CharactersTable />
     </Provider>
   );

@@ -1,8 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { ChangeEvent } from "react";
 import { css } from "@emotion/react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { useStore } from "../contexts/characters";
+import { Character } from "../types";
+import { State } from "../store/types";
+import { ACTIONS, SEARCH } from "../store/actions";
 
 const inputContainerStyles = css({
   width: "50%",
@@ -29,7 +32,15 @@ const magnifierIcon = css({
 });
 
 export default function SearchInput() {
-  const { search, state } = useStore((store) => store.searchText);
+  const state = useSelector<State, string>((state) => state.searchText);
+  const dispatch = useDispatch();
+
+  const search = (text: string) => {
+    dispatch<SEARCH>({
+      type: ACTIONS.SEARCH,
+      payload: { text },
+    });
+  };
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
